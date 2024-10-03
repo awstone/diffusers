@@ -1372,7 +1372,7 @@ def main(args):
             # changes the learning rate of text_encoder_parameters_one and text_encoder_parameters_two to be
             # --learning_rate
             params_to_optimize[1]["lr"] = args.learning_rate
-            params_to_optimize[2]["lr"] = args.learning_rate
+            # params_to_optimize[2]["lr"] = args.learning_rate
 
         optimizer = optimizer_class(
             params_to_optimize,
@@ -1686,12 +1686,15 @@ def main(args):
                 )
 
                 # handle guidance
-                if "guidance_embeds" in transformer.module.config:
-                    if transformer.module.config["guidance_embeds"]:
+                if "guidance_embeds" in transformer.config:
+                    if transformer.config["guidance_embeds"]:
                         guidance = torch.tensor([args.guidance_scale], device=accelerator.device)
                         guidance = guidance.expand(model_input.shape[0])
                 else:
                     guidance = None
+
+                print('pooled prompt embeds - ', pooled_prompt_embeds.size())
+                print('prompt embeds - ', prompt_embeds.size())
 
                 # Predict the noise residual
                 model_pred = transformer(
